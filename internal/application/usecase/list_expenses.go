@@ -1,8 +1,6 @@
 package usecase
 
 import (
-	"time"
-
 	expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
 )
 
@@ -33,7 +31,7 @@ func (uc *ListExpensesUseCase) Execute() ([]ListExpenseOutput, error) {
 			Amount:      e.Amount,
 			Category:    e.Category,
 			Description: e.Description,
-			CreatedAt:   e.CreatedAt.Format(time.RFC3339),
+			CreatedAt:   e.CreatedAt.Get(),
 		})
 	}
 

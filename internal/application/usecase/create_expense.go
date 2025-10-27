@@ -44,7 +44,7 @@ func (uc *CreateExpenseUseCase) Execute(in CreateExpenseInput) (*CreateExpenseOu
 		Amount:      e.Amount,
 		Category:    e.Category,
 		Description: e.Description,
-		CreatedAt:   e.CreatedAt.Format(time.RFC3339),
+		CreatedAt:   e.CreatedAt.Get(),
 	}
 
 	return out, nil

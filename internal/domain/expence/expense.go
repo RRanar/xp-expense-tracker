@@ -6,11 +6,27 @@ import (
 	"time"
 )
 
+type ExpenseCreatedTime struct {
+	value time.Time
+}
+
+func NewExpenseCreatedTime(t *time.Time) *ExpenseCreatedTime {
+	if t == nil {
+		return &ExpenseCreatedTime{value: time.Now()}
+	}
+
+	return &ExpenseCreatedTime{value: *t}
+}
+
+func (ct *ExpenseCreatedTime) Get() string {
+	return ct.value.Format(time.RFC3339)
+}
+
 type Expense struct {
 	Amount      int64
 	Category    string
 	Description string
-	CreatedAt   *time.Time
+	CreatedAt   *ExpenseCreatedTime
 }
 
 func NewExpense(amount int64, category string, description string, createdAt *time.Time) (*Expense, error) {
@@ -23,18 +39,10 @@ func NewExpense(amount int64, category string, description string, createdAt *ti
 		return nil, errors.New("category is required")
 	}
 
-	var createdTime *time.Time
-
-	if createdAt == nil {
-		createdTime = &time.Time{}
-	} else {
-		createdTime = createdAt
-	}
-
 	return &Expense{
 		Amount:      amount,
 		Category:    trimmed,
 		Description: description,
-		CreatedAt:   createdTime,
+		CreatedAt:   NewExpenseCreatedTime(createdAt),
 	}, nil
 }

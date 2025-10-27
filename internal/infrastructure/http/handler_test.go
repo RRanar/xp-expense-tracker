@@ -47,7 +47,7 @@ func TestCreateExpenseHandlerSuccess(t *testing.T) {
 
 	assert.Equal(t, http.StatusCreated, rec.Code)
 
-	var resp map[string]interface{}
+	var resp map[string]any
 	err := json.Unmarshal(rec.Body.Bytes(), &resp)
 	assert.NoError(t, err)
 	assert.Equal(t, "Food", resp["category"])

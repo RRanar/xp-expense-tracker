@@ -22,9 +22,9 @@ func TestSQLiteRepositorySaveAndFindAll(t *testing.T) {
 	repo, err := persistence.NewSQLiteRepository(db)
 	assert.NoError(t, err)
 
-	createdAt := &time.Time{}
-	e1, _ := expense.NewExpense(1000, "Food", "Pizza", createdAt)
-	e2, _ := expense.NewExpense(2000, "Transport", "Taxi", createdAt)
+	createdAt := time.Now()
+	e1, _ := expense.NewExpense(1000, "Food", "Pizza", &createdAt)
+	e2, _ := expense.NewExpense(2000, "Transport", "Taxi", &createdAt)
 	err = repo.Save(e1)
 	assert.NoError(t, err)
 	err = repo.Save(e2)
@@ -35,6 +35,6 @@ func TestSQLiteRepositorySaveAndFindAll(t *testing.T) {
 	assert.Len(t, all, 2)
 	assert.Equal(t, "Food", all[0].Category)
 	assert.Equal(t, "Transport", all[1].Category)
-	assert.Equal(t, createdAt, all[0].CreatedAt)
-	assert.Equal(t, createdAt, all[1].CreatedAt)
+	assert.Equal(t, createdAt.Format(time.RFC3339), all[0].CreatedAt.Get())
+	assert.Equal(t, createdAt.Format(time.RFC3339), all[1].CreatedAt.Get())
 }

@@ -48,7 +48,7 @@ func (s *SQLiteRepository) Save(e *expense.Expense) error {
 		e.Amount,
 		e.Category,
 		e.Description,
-		e.CreatedAt.Format(time.RFC3339),
+		e.CreatedAt.Get(),
 	)
 
 	return err
