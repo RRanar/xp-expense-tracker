@@ -1,7 +1,11 @@
 // Package usecase provides all UseCases for application layer
 package usecase
 
-import expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
+import (
+	"time"
+
+	expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
+)
 
 type CreateExpenseUseCase struct {
 	repo expense.Repository
@@ -18,6 +22,7 @@ type CreateExpenseOutput struct {
 	Amount      int64  `json:"amount"`
 	Category    string `json:"category"`
 	Description string `json:"description"`
+	CreatedAt   string `json:"createdAt"`
 }
 
 func NewCreateExpenseUseCase(repo expense.Repository) *CreateExpenseUseCase {
@@ -25,7 +30,8 @@ func NewCreateExpenseUseCase(repo expense.Repository) *CreateExpenseUseCase {
 }
 
 func (uc *CreateExpenseUseCase) Execute(in CreateExpenseInput) (*CreateExpenseOutput, error) {
-	e, err := expense.NewExpense(in.Amount, in.Category, in.Description)
+	createdAt := time.Now()
+	e, err := expense.NewExpense(in.Amount, in.Category, in.Description, &createdAt)
 	if err != nil {
 		return nil, err
 	}
@@ -38,6 +44,7 @@ func (uc *CreateExpenseUseCase) Execute(in CreateExpenseInput) (*CreateExpenseOu
 		Amount:      e.Amount,
 		Category:    e.Category,
 		Description: e.Description,
+		CreatedAt:   e.CreatedAt.Format(time.RFC3339),
 	}
 
 	return out, nil

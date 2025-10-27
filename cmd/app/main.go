@@ -1,37 +1,38 @@
 package main
 
 import (
+	"database/sql"
 	"log"
 	"net/http"
 
+	_ "github.com/mattn/go-sqlite3"
+
 	app "github.com/RRanar/xp-expense-tracker/internal/application/usecase"
-	"github.com/RRanar/xp-expense-tracker/internal/domain/expence"
 	handler "github.com/RRanar/xp-expense-tracker/internal/infrastructure/http"
+	persistence "github.com/RRanar/xp-expense-tracker/internal/infrastructure/persistence"
 )
 
-type inMemoryRepo struct {
-	saved []*expense.Expense
-}
-
-func (r *inMemoryRepo) Save(e *expense.Expense) error {
-	r.saved = append(r.saved, e)
-
-	return nil
-}
-
-func (r *inMemoryRepo) FindAll() ([]*expense.Expense, error) {
-	return r.saved, nil
-}
-
 func main() {
-	repo := &inMemoryRepo{}
-	h := handler.NewExpenseHandler(app.NewCreateExpenseUseCase(repo))
-	listHandler := handler.NewListExpensesHandler(app.NewListExpensesUseCase(repo))
+	db, err := sql.Open("sqlite3", "expenses.db")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
+	repo, err := persistence.NewSQLiteRepository(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createUC := app.NewCreateExpenseUseCase(repo)
+	listUC := app.NewListExpensesUseCase(repo)
+	createHandler := handler.NewExpenseHandler(createUC)
+	listHandler := handler.NewListExpensesHandler(listUC)
 
 	http.Handle("/expenses", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
-			h.ServeHTTP(w, r)
+			createHandler.ServeHTTP(w, r)
 		case http.MethodGet:
 			listHandler.ServeHTTP(w, r)
 		default:

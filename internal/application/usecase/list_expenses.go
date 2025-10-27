@@ -1,6 +1,10 @@
 package usecase
 
-import expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
+import (
+	"time"
+
+	expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
+)
 
 type ListExpensesUseCase struct {
 	repo expense.Repository
@@ -10,6 +14,7 @@ type ListExpenseOutput struct {
 	Amount      int64  `json:"amount"`
 	Category    string `json:"category"`
 	Description string `json:"description"`
+	CreatedAt   string `json:"createdAt"`
 }
 
 func NewListExpensesUseCase(repo expense.Repository) *ListExpensesUseCase {
@@ -28,6 +33,7 @@ func (uc *ListExpensesUseCase) Execute() ([]ListExpenseOutput, error) {
 			Amount:      e.Amount,
 			Category:    e.Category,
 			Description: e.Description,
+			CreatedAt:   e.CreatedAt.Format(time.RFC3339),
 		})
 	}
 

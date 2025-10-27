@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	app "github.com/RRanar/xp-expense-tracker/internal/application/usecase"
 	expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
@@ -28,8 +29,9 @@ func (f *fakeRepoList) FindAll() ([]*expense.Expense, error) {
 
 func TestListExpensesHandlerReturnJsonList(t *testing.T) {
 	repo := &fakeRepoList{}
-	e1, _ := expense.NewExpense(1000, "Food", "Lunch and cafe")
-	e2, _ := expense.NewExpense(2000, "Transport", "Taxi")
+	createdAt := &time.Time{}
+	e1, _ := expense.NewExpense(1000, "Food", "Lunch and cafe", createdAt)
+	e2, _ := expense.NewExpense(2000, "Transport", "Taxi", createdAt)
 	_ = repo.Save(e1)
 	_ = repo.Save(e2)
 
@@ -49,4 +51,6 @@ func TestListExpensesHandlerReturnJsonList(t *testing.T) {
 	assert.Len(t, resp, 2)
 	assert.Equal(t, "Food", resp[0]["category"])
 	assert.Equal(t, "Transport", resp[1]["category"])
+	assert.Equal(t, createdAt.Format(time.RFC3339), resp[0]["createdAt"])
+	assert.Equal(t, createdAt.Format(time.RFC3339), resp[1]["createdAt"])
 }

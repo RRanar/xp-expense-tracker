@@ -2,6 +2,7 @@ package usecase_test
 
 import (
 	"testing"
+	"time"
 
 	"github.com/RRanar/xp-expense-tracker/internal/application/usecase"
 	expense "github.com/RRanar/xp-expense-tracker/internal/domain/expence"
@@ -24,8 +25,9 @@ func (f *fakeRepoList) FindAll() ([]*expense.Expense, error) {
 
 func TestListExpensesReturnAllSavedExpenses(t *testing.T) {
 	repo := &fakeRepoList{}
-	el1, _ := expense.NewExpense(1000, "Food", "Pizza")
-	el2, _ := expense.NewExpense(2000, "Transport", "Taxi")
+	createdAt := &time.Time{}
+	el1, _ := expense.NewExpense(1000, "Food", "Pizza", createdAt)
+	el2, _ := expense.NewExpense(2000, "Transport", "Taxi", createdAt)
 	repo.Save(el1)
 	repo.Save(el2)
 
@@ -35,4 +37,5 @@ func TestListExpensesReturnAllSavedExpenses(t *testing.T) {
 	assert.Len(t, out, 2)
 	assert.Equal(t, "Food", out[0].Category)
 	assert.Equal(t, "Transport", out[1].Category)
+	assert.Equal(t, createdAt, out[0].CreatedAt)
 }
