@@ -36,5 +36,5 @@ func TestCreateExpenseSuccess(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, output)
 	assert.Equal(t, 1, len(repo.saved))
-	assert.Equal(t, "Food", repo.saved[0].Category)
+	assert.Equal(t, "Food", repo.saved[0].Category())
 }

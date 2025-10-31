@@ -9,6 +9,7 @@ type ListExpensesUseCase struct {
 }
 
 type ListExpenseOutput struct {
+	ID          string `json:"id"`
 	Amount      int64  `json:"amount"`
 	Category    string `json:"category"`
 	Description string `json:"description"`
@@ -28,10 +29,11 @@ func (uc *ListExpensesUseCase) Execute() ([]ListExpenseOutput, error) {
 	var out []ListExpenseOutput
 	for _, e := range items {
 		out = append(out, ListExpenseOutput{
-			Amount:      e.Amount,
-			Category:    e.Category,
-			Description: e.Description,
-			CreatedAt:   e.CreatedAt.Get(),
+			ID:          e.ID().String(),
+			Amount:      e.Amount(),
+			Category:    e.Category(),
+			Description: e.Description(),
+			CreatedAt:   e.CreatedAt().String(),
 		})
 	}
 

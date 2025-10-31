@@ -1,48 +1,40 @@
 package expense
 
 import (
-	"errors"
 	"strings"
-	"time"
+
+	"github.com/RRanar/xp-expense-tracker/internal/domain/shared"
 )
 
-type ExpenseCreatedTime struct {
-	value time.Time
-}
-
-func NewExpenseCreatedTime(t *time.Time) *ExpenseCreatedTime {
-	if t == nil {
-		return &ExpenseCreatedTime{value: time.Now()}
-	}
-
-	return &ExpenseCreatedTime{value: *t}
-}
-
-func (ct *ExpenseCreatedTime) Get() string {
-	return ct.value.Format(time.RFC3339)
-}
-
 type Expense struct {
-	Amount      int64
-	Category    string
-	Description string
-	CreatedAt   *ExpenseCreatedTime
+	id          shared.ID
+	amount      int64
+	category    string
+	description string
+	createdAt   shared.CreatedAt
 }
 
-func NewExpense(amount int64, category string, description string, createdAt *time.Time) (*Expense, error) {
+func NewExpense(amount int64, category string, description string, createdAt string) (*Expense, error) {
 	if amount <= 0 {
-		return nil, errors.New("amount must be positive")
+		return nil, ErrInvalidAmount
 	}
 
 	trimmed := strings.TrimSpace(category)
 	if trimmed == "" {
-		return nil, errors.New("category is required")
+		return nil, ErrMissingCategory
 	}
 
 	return &Expense{
-		Amount:      amount,
-		Category:    trimmed,
-		Description: description,
-		CreatedAt:   NewExpenseCreatedTime(createdAt),
+		id:          shared.NewID(),
+		amount:      amount,
+		category:    trimmed,
+		description: description,
+		createdAt:   shared.CreatedAtFromString(createdAt),
 	}, nil
 }
+
+func (e *Expense) ID() shared.ID               { return e.id }
+func (e *Expense) Amount() int64               { return e.amount }
+func (e *Expense) Category() string            { return e.category }
+func (e *Expense) Description() string         { return e.description }
+func (e *Expense) CreatedAt() shared.CreatedAt { return e.createdAt }

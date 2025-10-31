@@ -23,7 +23,7 @@ func (h *ListExpensesHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 
 	out, err := h.useCase.Execute()
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		writeError(w, err)
 		return
 	}
 

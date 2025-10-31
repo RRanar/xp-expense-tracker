@@ -51,4 +51,31 @@ func TestCreateExpenseHandlerSuccess(t *testing.T) {
 	err := json.Unmarshal(rec.Body.Bytes(), &resp)
 	assert.NoError(t, err)
 	assert.Equal(t, "Food", resp["category"])
+	assert.NotEmpty(t, resp["id"])
+}
+
+func TestCreateExpenseHandler_InvalidAmount(t *testing.T) {
+	repo := &fakeRepo{}
+	useCase := app.NewCreateExpenseUseCase(repo)
+	h := handler.NewExpenseHandler(useCase)
+
+	body := map[string]any{
+		"amount":      -100,
+		"category":    "Food",
+		"description": "Lunch",
+	}
+	data, _ := json.Marshal(body)
+
+	req := httptest.NewRequest(http.MethodPost, "/expenses", bytes.NewReader(data))
+	req.Header.Set("Content-Type", "application/json")
+
+	rec := httptest.NewRecorder()
+	h.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	var resp map[string]any
+	err := json.Unmarshal(rec.Body.Bytes(), &resp)
+	assert.NoError(t, err)
+	assert.Equal(t, "INVALID_AMOUNT", resp["error"].(map[string]any)["code"])
 }

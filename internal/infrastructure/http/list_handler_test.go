@@ -29,7 +29,7 @@ func (f *fakeRepoList) FindAll() ([]*expense.Expense, error) {
 
 func TestListExpensesHandlerReturnJsonList(t *testing.T) {
 	repo := &fakeRepoList{}
-	createdAt := &time.Time{}
+	createdAt := time.Now().Format(time.RFC3339)
 	e1, _ := expense.NewExpense(1000, "Food", "Lunch and cafe", createdAt)
 	e2, _ := expense.NewExpense(2000, "Transport", "Taxi", createdAt)
 	_ = repo.Save(e1)
@@ -49,8 +49,10 @@ func TestListExpensesHandlerReturnJsonList(t *testing.T) {
 	err := json.Unmarshal(rec.Body.Bytes(), &resp)
 	assert.NoError(t, err)
 	assert.Len(t, resp, 2)
+	assert.NotEmpty(t, resp[0]["id"])
+	assert.NotEmpty(t, resp[1]["id"])
 	assert.Equal(t, "Food", resp[0]["category"])
 	assert.Equal(t, "Transport", resp[1]["category"])
-	assert.Equal(t, createdAt.Format(time.RFC3339), resp[0]["createdAt"])
-	assert.Equal(t, createdAt.Format(time.RFC3339), resp[1]["createdAt"])
+	assert.Equal(t, createdAt, resp[0]["createdAt"])
+	assert.Equal(t, createdAt, resp[1]["createdAt"])
 }

@@ -28,7 +28,7 @@ func (h *ExpenseHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	output, err := h.useCase.Execute(input)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		writeError(w, err)
 		return
 	}
 

@@ -30,8 +30,8 @@ func NewCreateExpenseUseCase(repo expense.Repository) *CreateExpenseUseCase {
 }
 
 func (uc *CreateExpenseUseCase) Execute(in CreateExpenseInput) (*CreateExpenseOutput, error) {
-	createdAt := time.Now()
-	e, err := expense.NewExpense(in.Amount, in.Category, in.Description, &createdAt)
+	createdAt := time.Now().Format(time.RFC3339)
+	e, err := expense.NewExpense(in.Amount, in.Category, in.Description, createdAt)
 	if err != nil {
 		return nil, err
 	}
@@ -41,10 +41,11 @@ func (uc *CreateExpenseUseCase) Execute(in CreateExpenseInput) (*CreateExpenseOu
 	}
 
 	out := &CreateExpenseOutput{
-		Amount:      e.Amount,
-		Category:    e.Category,
-		Description: e.Description,
-		CreatedAt:   e.CreatedAt.Get(),
+		ID:          e.ID().String(),
+		Amount:      e.Amount(),
+		Category:    e.Category(),
+		Description: e.Description(),
+		CreatedAt:   e.CreatedAt().String(),
 	}
 
 	return out, nil

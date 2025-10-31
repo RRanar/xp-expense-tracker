@@ -25,9 +25,9 @@ func (f *fakeRepoList) FindAll() ([]*expense.Expense, error) {
 
 func TestListExpensesReturnAllSavedExpenses(t *testing.T) {
 	repo := &fakeRepoList{}
-	createdAt := time.Now()
-	el1, _ := expense.NewExpense(1000, "Food", "Pizza", &createdAt)
-	el2, _ := expense.NewExpense(2000, "Transport", "Taxi", &createdAt)
+	createdAt := time.Now().Format(time.RFC3339)
+	el1, _ := expense.NewExpense(1000, "Food", "Pizza", createdAt)
+	el2, _ := expense.NewExpense(2000, "Transport", "Taxi", createdAt)
 	repo.Save(el1)
 	repo.Save(el2)
 
@@ -37,6 +37,6 @@ func TestListExpensesReturnAllSavedExpenses(t *testing.T) {
 	assert.Len(t, out, 2)
 	assert.Equal(t, "Food", out[0].Category)
 	assert.Equal(t, "Transport", out[1].Category)
-	assert.Equal(t, createdAt.Format(time.RFC3339), out[0].CreatedAt)
-	assert.Equal(t, createdAt.Format(time.RFC3339), out[1].CreatedAt)
+	assert.Equal(t, createdAt, out[0].CreatedAt)
+	assert.Equal(t, createdAt, out[1].CreatedAt)
 }
