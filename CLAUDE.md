@@ -19,6 +19,7 @@ This project follows a docs-first workflow. The skills, gate tool, standards and
 - **TDD.** Failing test first, from an acceptance criterion; then minimal code; then refactor.
 - **Never invent.** No fabricated benchmark numbers, incident history or production claims. This is a pet project: say "pet project, deployed", never "production experience".
 - **No secrets, no real data.** Synthetic data only.
+- **Code explains itself; comments are the exception.** The best comment is clear code: precise names, small functions, types that make invalid states unrepresentable. Do not write comments that restate what the code does, mark sections, or keep dead code. Write a comment only when it adds what the code cannot say (a non-obvious reason, a constraint, a trade-off), and always write the module or package-level documentation comment that the language's convention expects (for example a Go package comment) describing what the module is for.
 - Commits reference the spec id (`spec-0001: ...`). Do not commit or push unless the user asks.
 
 ## Skills (in `.claude/skills/`)
