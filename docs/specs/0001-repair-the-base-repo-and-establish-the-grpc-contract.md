@@ -1,7 +1,7 @@
 ---
 id: 0001
 title: Repair the base repo and establish the gRPC contract
-status: Accepted
+status: Implemented
 date: 2026-11-18
 approved_by: owner
 approved_date: 2026-11-18
@@ -96,7 +96,11 @@ Each test is written failing first from its criterion (TDD), then the minimal co
 
 - RFC 0001: Expense Ledger gRPC service with transactional outbox on GCP
 - ADR 0003 Go, ADR 0004 gRPC with Protobuf, ADR 0005 PostgreSQL
-- Gate reminder: ADRs 0003, 0004, 0005 and RFC 0001 are `Proposed`; all must be `Accepted` before `/implement 0001` is allowed. ADRs 0003 to 0005 have not yet been reviewed.
+- Implementation: commits `412eb7d` (work in progress), `eccb6bd` (domain, use cases, contract, CI) and `5e11b24` (`go` directive raised to 1.25.8 after the first CI run failed `govulncheck` on a standard-library vulnerability). The first fully green CI run is GitHub Actions run 44413325629.
+- Deviations from the acceptance criteria, accepted by the owner when marking this spec Implemented:
+  - AC 11: `buf lint` passes in CI. `buf breaking` has never run, because no earlier contract exists on `master`. The CI file runs it on pull requests only and says why, as the criterion allows. It is untested until the first pull request that touches the proto.
+  - AC 12: the deliberate lint failure was shown locally (a `time.Now()` under `internal/application` failed `golangci-lint` through `forbidigo`) and recorded in commit `eccb6bd`, not in a failing CI run.
+- Gate reminder (historical): ADRs 0003 to 0005 and RFC 0001 were `Accepted` before implementation began.
 - Open questions, resolved by the owner's approval on 2026-11-18 (accepted as written):
   1. CI provider is GitHub Actions per the source note; confirm, since ADR 0008 covers deployment, not CI.
   2. Linter (`golangci-lint` default configuration), dependency-rule tool and secret scanner are chosen in the first implementation commits; confirm that is acceptable, or name them now.

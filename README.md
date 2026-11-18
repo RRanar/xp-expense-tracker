@@ -52,4 +52,4 @@ Tooling comes from a Nix devShell defined outside this repository (`xp-expense-t
 | `make buf-lint` / `make buf-breaking` | contract lint / breaking-change check against `BASE_BRANCH` |
 | `make check` | everything except `buf-breaking` |
 
-CI (`.github/workflows/ci.yml`) runs the same targets with `contents: read` permission and SHA-pinned actions, installing the tools at the same pinned versions. The full pipeline duration has not been observed yet, because CI has not run; it will be recorded here once it has.
+CI (`.github/workflows/ci.yml`) runs the same targets with `contents: read` permission and SHA-pinned actions, installing the tools at the same pinned versions. Measured once: the first fully green run (commit `5e11b24`, 2026-11-18, GitHub-hosted runner) took 1 min 56 s from run creation to completion, including tool installation. It is a single observation, not an average, and no target is set for it.
