@@ -1,0 +1,103 @@
+// Expense ledger v1 contract. Definition only; the server arrives in a later spec.
+// The owner of every call comes from the authenticated context, never from a
+// request field.
+syntax = "proto3";
+
+package expense.v1;
+
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/timestamp.proto";
+
+option go_package = "github.com/RRanar/xp-expense-tracker/api/gen/expense/v1;expensev1";
+
+// Money is an amount in minor units (for example cents) plus a currency.
+message Money {
+  int64 amount_minor = 1;
+  // Three uppercase letters, for example USD.
+  string currency = 2;
+}
+
+message Expense {
+  string id = 1;
+  Money money = 2;
+  string category = 3;
+  string merchant = 4;
+  string note = 5;
+  // The day the expense happened, formatted YYYY-MM-DD.
+  string expense_date = 6;
+  google.protobuf.Timestamp create_time = 7;
+}
+
+service ExpenseService {
+  rpc CreateExpense(CreateExpenseRequest) returns (CreateExpenseResponse);
+  rpc GetExpense(GetExpenseRequest) returns (GetExpenseResponse);
+  rpc ListExpenses(ListExpensesRequest) returns (ListExpensesResponse);
+  // Only the fields named in update_mask change. Maskable paths: money.amount_minor,
+  // money.currency, category, merchant, note, expense_date.
+  rpc UpdateExpense(UpdateExpenseRequest) returns (UpdateExpenseResponse);
+  rpc DeleteExpense(DeleteExpenseRequest) returns (DeleteExpenseResponse);
+  // Streams every expense of one calendar month, ordered by expense date then id.
+  rpc ExportMonth(ExportMonthRequest) returns (stream ExportMonthResponse);
+}
+
+message CreateExpenseRequest {
+  Money money = 1;
+  string category = 2;
+  string merchant = 3;
+  string note = 4;
+  string expense_date = 5;
+}
+
+message CreateExpenseResponse {
+  Expense expense = 1;
+}
+
+message GetExpenseRequest {
+  string id = 1;
+}
+
+message GetExpenseResponse {
+  Expense expense = 1;
+}
+
+message ListExpensesRequest {
+  // Defaults to 50 when zero; values above 200 are capped at 200.
+  int32 page_size = 1;
+  // Opaque token from a previous response; empty for the first page.
+  string page_token = 2;
+  string category = 3;
+  // Inclusive bounds, YYYY-MM-DD; empty means unbounded.
+  string from_date = 4;
+  string to_date = 5;
+}
+
+message ListExpensesResponse {
+  repeated Expense expenses = 1;
+  // Empty when no further page exists.
+  string next_page_token = 2;
+}
+
+message UpdateExpenseRequest {
+  Expense expense = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message UpdateExpenseResponse {
+  Expense expense = 1;
+}
+
+message DeleteExpenseRequest {
+  string id = 1;
+}
+
+message DeleteExpenseResponse {}
+
+message ExportMonthRequest {
+  int32 year = 1;
+  // 1 to 12.
+  int32 month = 2;
+}
+
+message ExportMonthResponse {
+  Expense expense = 1;
+}

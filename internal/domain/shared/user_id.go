@@ -5,8 +5,6 @@ import (
 	"strings"
 )
 
-// UserID identifies the owner of a record. Where it comes from is decided
-// in a later spec (authentication); the domain only requires it to be present.
 type UserID struct {
 	value string
 }

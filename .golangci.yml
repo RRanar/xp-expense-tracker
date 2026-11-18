@@ -1,0 +1,27 @@
+version: "2"
+
+linters:
+  default: none
+  enable:
+    - errcheck
+    - govet
+    - ineffassign
+    - staticcheck
+    - unused
+    - forbidigo
+  settings:
+    forbidigo:
+      forbid:
+        - pattern: ^time\.Now$
+          msg: inject a shared.Clock instead of reading the system time
+  exclusions:
+    rules:
+      # time.Now is banned only in application code; adapters and the
+      # composition root may read the system clock.
+      - path-except: internal/(app|application)/
+        linters:
+          - forbidigo
+
+formatters:
+  enable:
+    - gofmt
