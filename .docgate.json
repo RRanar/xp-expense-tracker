@@ -1,0 +1,10 @@
+{
+  "name": "xp-expense-tracker",
+  "code_paths": [
+    "cmd/",
+    "internal/",
+    "api/",
+    "deploy/",
+    "pkg/"
+  ]
+}
