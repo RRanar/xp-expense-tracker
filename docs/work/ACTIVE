@@ -1,3 +1,4 @@
 # The id of the spec currently being implemented (for example: 0001).
 # Leave empty when none. The gate hook reads the first non-comment line.
 # Only set this after the spec and its ADRs are Accepted by the user.
+0001
